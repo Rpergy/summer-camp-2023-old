@@ -15,6 +15,8 @@ public class runCode : MonoBehaviour
     public float turnSpeed = 1f;
     public float timeScale = 0.03f;
 
+    public bool trail = false;
+
     Vector3 startPos;
     Vector3 startRot;
 
@@ -39,6 +41,7 @@ public class runCode : MonoBehaviour
     }
 
     IEnumerator Movement(string[] lines) {
+        trail = true;
         for (int i = 0; i < lines.Length; i++) {
             string[] command;
             if (i == 0) {
@@ -57,7 +60,7 @@ public class runCode : MonoBehaviour
                     moveAmt = Int32.Parse(command[1]);
                 }
                 catch {
-                    error.text = "Non-Integer movement amount on line " + (i + 1);
+                    error.text = "Error: Non-Integer movement amount on line " + (i + 1);
                     break;
                 }
                 
@@ -80,7 +83,7 @@ public class runCode : MonoBehaviour
                     moveAmt = Int32.Parse(command[1]);
                 }
                 catch {
-                    error.text = "Non-Integer movement amount on line " + (i + 1);
+                    error.text = "Error: Non-Integer movement amount on line " + (i + 1);
                     break;
                 }
                 
@@ -103,7 +106,7 @@ public class runCode : MonoBehaviour
                     angle = Int32.Parse(command[1]);
                 }
                 catch {
-                    error.text = "Non-Integer movement amount on line " + (i + 1);
+                    error.text = "Error: Non-Integer movement amount on line " + (i + 1);
                     break;
                 }
                 Vector3 startingRot = robot.eulerAngles;
@@ -115,16 +118,51 @@ public class runCode : MonoBehaviour
                 }
                 robot.eulerAngles = endingRot;
             }
-            else if (command[0] == "loop") {
-
-            }
             else if (command[0] == "endloop") {
+                // Loop backwards from endloop line to find a loop command: if the loop number is 0, break from the loop statement
+                int loopLineIndex = -1;
+                bool finishedLoop = false;
 
+                for (int j = i; j >= 0; j--) {
+                    string[] cmd = lines[j].Split(" ");
+                    if (cmd[0] == "loop") {
+                        if (cmd[1] == "1") {
+                            finishedLoop = true;
+                            loopLineIndex = -2;
+                        }
+                        else {
+                            loopLineIndex = j;
+                        }
+                        break;
+                    }
+                }
+
+                if (loopLineIndex == -1) { // When we havent found a starting loop
+                    error.text = "Error: Ending loop used without matching starting loop on line " + i;
+                }
+
+                if (!finishedLoop) {
+                    // Decrement the loop number by one
+                    int loopAmt;
+                    Debug.Log("loop number: " + lines[loopLineIndex].Split(" ")[1]);
+                    try {
+                        loopAmt = Int32.Parse(lines[loopLineIndex].Split(" ")[1]);
+                    }
+                    catch {
+                        error.text = "Error: Non-Integer loop amount on line " + (i + 1);
+                        break;
+                    }
+                    lines[loopLineIndex] = "loop " + (loopAmt - 1);
+
+                    // Set i to the line after the loop command
+                    i = loopLineIndex;
+                }
             }
-            else {
+            else if (command[0] != "loop") {
                 error.text = "Error: Unrecognized command on line " + (i + 1);
             }
         }
+        trail = false;
         yield return null;
     }
 }

@@ -341,8 +341,11 @@
 -r:"Library/Bee/artifacts/2400b0aE.dag/Unity.VisualStudio.Editor.ref.dll"
 -r:"Library/Bee/artifacts/2400b0aE.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/2400b0aE.dag/UnityEngine.UI.ref.dll"
+"Assets/Scripts/changeTheme.cs"
+"Assets/Scripts/generateHills.cs"
 "Assets/Scripts/moveCamera.cs"
 "Assets/Scripts/runCode.cs"
+"Assets/Scripts/trailRender.cs"
 -langversion:9.0
 
 /deterministic
