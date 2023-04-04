@@ -28,6 +28,8 @@ public class runCode : MonoBehaviour
     public void reset() {
         robot.position = startPos;
         robot.rotation = Quaternion.Euler(startRot);
+        StopAllCoroutines();
+        trail = false;
     }
 
     public void interpret() {
@@ -37,6 +39,8 @@ public class runCode : MonoBehaviour
         error.text = "";
         reset();
 
+        StopAllCoroutines();
+        trail = false;
         StartCoroutine(Movement(lines.SkipLast(1).ToArray()));
     }
 
